@@ -48,7 +48,7 @@ public class MatchingController {
     private void match() {
         System.out.println("1번고름");
         outputView.printTrackAndMission();
-        String stageinfo = inputView.getStageInfo();
+        String stageinfo = inputView.getStageInfo(stageInfo);
     }
 
     private void view() {
