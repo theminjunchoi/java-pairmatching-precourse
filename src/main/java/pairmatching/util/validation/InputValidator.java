@@ -26,4 +26,10 @@ public class InputValidator {
             throw new IllegalArgumentException(InputException.INVALID_STAGE.getExceptionMessage());
         }
     }
+
+    public static void validateYesOrNo(String inputYesOrNo) {
+        if (!inputYesOrNo.equals("네") && !inputYesOrNo.equals("아니요")) {
+            throw new IllegalArgumentException(InputException.INVALID_YES_OR_NO.getExceptionMessage());
+        }
+    }
 }

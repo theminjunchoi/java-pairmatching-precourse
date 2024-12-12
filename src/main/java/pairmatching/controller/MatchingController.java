@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 import pairmatching.domain.Stage;
 import pairmatching.service.MatchingService;
+import pairmatching.util.exception.InputException;
 import pairmatching.view.InputView;
 import pairmatching.view.OutputView;
 
@@ -48,13 +49,42 @@ public class MatchingController {
     private void match() {
         System.out.println("1번고름");
         outputView.printTrackAndMission();
-        String stageinfo = inputView.getStageInfo(stageInfo);
+        String stageinfo = getStage();
+        // 매칭 이력 있는지 확인, 없으면 생성, 있으면 다시 할건지 물어보고 판단
+        if (findStage(stageinfo)) {
+            if (askAgain()) {
+                generatePair();
+            }
+            getInput();
+        }
+        generatePair();
+    }
+
+    private boolean askAgain() {
+        try {
+            String answer = inputView.getAgainMatch();
+            return answer.equals("네");
+        } catch (IllegalArgumentException e) {
+            return askAgain();
+        }
+    }
+
+    private boolean findStage(String stageinfo) {
+        List<String> stageValues = List.of(stageinfo.replace(" ", "").split(","));
+        String track = stageValues.get(0);
+        int level = Integer.parseInt(stageValues.get(1).replace("레벨", ""));
+        String mission = stageValues.get(2);
+        Stage stage = new Stage(track, level, mission);
+        if (stageInfo.contains(stage)) {
+            return true;
+        }
+        return false;
     }
 
     private void view() {
         System.out.println("2번고름");
         outputView.printTrackAndMission();
-
+        String stageinfo = getStage();
     }
 
     private void reset() {
@@ -65,9 +95,12 @@ public class MatchingController {
         return ;
     }
 
-//    private void checkAction(Runnable action) {
-//        if (action == null) {
-//            throw new IllegalArgumentException("hi");
-//        }
-//    }
+    private String getStage() {
+        try {
+            return inputView.getStageInfo(stageInfo);
+        } catch (IllegalArgumentException e) {
+            outputView.printErrorMessage(e);
+            return inputView.getStageInfo(stageInfo);
+        }
+    }
 }
